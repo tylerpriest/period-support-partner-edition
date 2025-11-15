@@ -131,6 +131,21 @@ export default function SettingsScreen() {
             </Text>
           </View>
         </TouchableOpacity>
+
+        {settings.notificationsEnabled && (
+          <>
+            <View style={styles.buttonSpacer} />
+            <Button
+              title="Send Test Notification"
+              onPress={async () => {
+                await sendTestNotification();
+                Alert.alert('Test Sent', 'Check your notifications!');
+              }}
+              variant="tertiary"
+              size="small"
+            />
+          </>
+        )}
       </Card>
 
       {/* Privacy & Data */}

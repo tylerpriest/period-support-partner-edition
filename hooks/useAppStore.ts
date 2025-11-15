@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { CycleData, UserSettings, ConsentData } from '../types';
 import { DEFAULT_SETTINGS } from '../types';
+import { scheduleNotifications } from '../utils/notifications';
 
 interface AppStore {
   // State
@@ -30,6 +31,12 @@ export const useAppStore = create<AppStore>((set, get) => ({
     set({ cycleData: data });
     try {
       await AsyncStorage.setItem('cycleData', JSON.stringify(data));
+
+      // Schedule notifications if enabled
+      const { settings } = get();
+      if (settings.notificationsEnabled) {
+        await scheduleNotifications(data, true);
+      }
     } catch (error) {
       console.error('Error saving cycle data:', error);
     }
@@ -41,6 +48,14 @@ export const useAppStore = create<AppStore>((set, get) => ({
     set({ settings: updatedSettings });
     try {
       await AsyncStorage.setItem('settings', JSON.stringify(updatedSettings));
+
+      // Reschedule notifications if notification setting changed
+      if ('notificationsEnabled' in newSettings) {
+        const { cycleData } = get();
+        if (cycleData) {
+          await scheduleNotifications(cycleData, updatedSettings.notificationsEnabled);
+        }
+      }
     } catch (error) {
       console.error('Error saving settings:', error);
     }
