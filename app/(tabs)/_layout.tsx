@@ -1,4 +1,5 @@
 import React from 'react';
+import { Text } from 'react-native';
 import { Tabs } from 'expo-router';
 import { colors } from '../../styles/tokens';
 
@@ -57,5 +58,5 @@ function TabBarIcon({ name, color }: { name: string; color: string }) {
     settings: '⚙️',
   };
 
-  return <span style={{ fontSize: 24 }}>{iconMap[name] || '•'}</span>;
+  return <Text style={{ fontSize: 24, color }}>{iconMap[name] || '•'}</Text>;
 }

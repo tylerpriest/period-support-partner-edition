@@ -48,6 +48,7 @@ export interface ConsentData {
   given: boolean;
   date?: string;
   version: string; // Privacy policy version
+  timestamp?: string; // ISO string timestamp when consent was given
 }
 
 export interface ActionItem {

@@ -85,50 +85,87 @@ export const spacing = {
 };
 
 export const typography = {
-  // Headings
+  // Font families (using system fonts until custom fonts are loaded)
+  fontFamily: {
+    sans: 'System', // Will be Nunito when custom fonts loaded
+    serif: 'System', // Will be DM Sans when custom fonts loaded
+  },
+
+  // Headings object for structured access
+  heading: {
+    h1: {
+      fontFamily: 'System',
+      fontSize: 32,
+      lineHeight: 40,
+      letterSpacing: -0.5,
+    },
+    h2: {
+      fontFamily: 'System',
+      fontSize: 24,
+      lineHeight: 32,
+      letterSpacing: -0.3,
+    },
+    h3: {
+      fontFamily: 'System',
+      fontSize: 20,
+      lineHeight: 28,
+      letterSpacing: 0,
+    },
+  },
+
+  // Body text with size variants
+  body: {
+    sm: {
+      fontSize: 14,
+      lineHeight: 20,
+    },
+    md: {
+      fontSize: 16,
+      lineHeight: 24,
+    },
+    lg: {
+      fontSize: 18,
+      lineHeight: 28,
+    },
+  },
+
+  // Legacy/direct access (kept for compatibility)
   h1: {
-    fontFamily: 'DMSans-Bold',
+    fontFamily: 'System',
     fontSize: 32,
     lineHeight: 40,
     letterSpacing: -0.5,
   },
   h2: {
-    fontFamily: 'DMSans-Bold',
+    fontFamily: 'System',
     fontSize: 24,
     lineHeight: 32,
     letterSpacing: -0.3,
   },
   h3: {
-    fontFamily: 'DMSans-Medium',
+    fontFamily: 'System',
     fontSize: 20,
     lineHeight: 28,
     letterSpacing: 0,
   },
-  // Body
-  body: {
-    fontFamily: 'Nunito-Regular',
-    fontSize: 16,
-    lineHeight: 24,
-  },
   bodyBold: {
-    fontFamily: 'Nunito-SemiBold',
+    fontFamily: 'System',
     fontSize: 16,
     lineHeight: 24,
   },
-  // UI
   button: {
-    fontFamily: 'DMSans-Medium',
+    fontFamily: 'System',
     fontSize: 16,
     lineHeight: 24,
     letterSpacing: 0.5,
   },
   caption: {
-    fontFamily: 'Nunito-Regular',
+    fontFamily: 'System',
     fontSize: 14,
     lineHeight: 20,
   },
   label: {
-    fontFamily: 'DMSans-Medium',
+    fontFamily: 'System',
     fontSize: 12,
     lineHeight: 16,
     letterSpacing: 0.5,
@@ -166,6 +203,13 @@ export const shadows = {
     shadowOpacity: 0.12,
     shadowRadius: 16,
     elevation: 5,
+  },
+  xl: {
+    shadowColor: '#1C1917',
+    shadowOffset: { width: 0, height: 12 },
+    shadowOpacity: 0.15,
+    shadowRadius: 24,
+    elevation: 8,
   },
 };
 
