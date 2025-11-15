@@ -35,6 +35,179 @@
 - [ ] Privacy manifest complete (iOS)
 - [ ] Data safety section complete (Android)
 
+## Vercel PWA Deployment (Web Testing)
+
+The fastest way to test your app is to deploy it as a Progressive Web App (PWA) on Vercel. The app is fully configured for web deployment with `vercel.json` and `public/manifest.json` already created.
+
+### Prerequisites
+
+**Vercel Account** (Free tier available)
+- Sign up at [vercel.com](https://vercel.com)
+- Connect your GitHub account
+
+### Method 1: Deploy via Vercel Dashboard (Recommended for First Deploy)
+
+1. **Push your code to GitHub**
+   ```bash
+   git push origin claude/add-period-support-docs-012Mbh2B4J4TuLsv3DXrxQtU
+   ```
+
+2. **Import to Vercel**
+   - Go to [vercel.com/new](https://vercel.com/new)
+   - Click "Import Git Repository"
+   - Select your repository: `tylerpriest/period-support-partner-edition`
+   - Select the branch: `claude/add-period-support-docs-012Mbh2B4J4TuLsv3DXrxQtU`
+
+3. **Configure Project**
+   - **Framework Preset**: Other
+   - **Build Command**: `npx expo export --platform web`
+   - **Output Directory**: `dist`
+   - **Install Command**: `npm install`
+
+   (These settings are already configured in `vercel.json` and will be auto-detected)
+
+4. **Deploy**
+   - Click "Deploy"
+   - Wait 2-3 minutes for build to complete
+   - Your app will be live at: `https://period-support-partner-edition-<hash>.vercel.app`
+
+5. **Test the PWA**
+   - Open the deployment URL on your phone
+   - On iOS Safari: Tap Share → "Add to Home Screen"
+   - On Android Chrome: Tap menu → "Install app" or "Add to Home Screen"
+   - The app will install as a PWA and work offline
+
+### Method 2: Deploy via Vercel CLI
+
+1. **Install Vercel CLI**
+   ```bash
+   npm install -g vercel
+   ```
+
+2. **Login to Vercel**
+   ```bash
+   vercel login
+   # Follow the prompts to authenticate
+   ```
+
+3. **Deploy to Production**
+   ```bash
+   # From project root directory
+   vercel --prod
+   ```
+
+4. **Follow prompts**
+   - Set up and deploy? Y
+   - Which scope? (Select your account)
+   - Link to existing project? N (first time)
+   - Project name? period-support-partner-edition
+   - Directory? ./
+   - Override settings? N (vercel.json is already configured)
+
+5. **Your app is deployed!**
+   - Production URL will be displayed
+   - Example: `https://period-support-partner-edition.vercel.app`
+
+### Method 3: Local Testing (Before Deploying)
+
+Test the web build locally before deploying:
+
+```bash
+# Start Expo web development server
+npx expo start --web
+
+# Or build and preview the production build
+npx expo export --platform web
+npx serve dist
+```
+
+Open `http://localhost:8081` (Expo) or `http://localhost:3000` (serve) to test.
+
+### Vercel Deployment Notes
+
+**Build Process:**
+- Vercel runs: `npm install`
+- Then runs: `npx expo export --platform web`
+- Outputs to: `dist/` directory
+- Serves static files from `dist/`
+
+**Environment:**
+- No environment variables needed for basic deployment
+- All data stored in browser LocalStorage (no backend required)
+
+**PWA Features:**
+- Installable on iOS and Android
+- Works offline after first load
+- Full-screen app experience
+- Uses native share APIs
+
+**Domain Setup (Optional):**
+- Go to Vercel dashboard → your project → Settings → Domains
+- Add custom domain: `periodsupport.app` or similar
+- Vercel will guide you through DNS configuration
+
+**Continuous Deployment:**
+- Once connected, Vercel auto-deploys on every push to the branch
+- Preview deployments for PRs
+- Production deployments for main branch
+
+### Vercel Deployment Checklist
+
+- [ ] Code pushed to GitHub
+- [ ] Vercel account created
+- [ ] Repository imported to Vercel
+- [ ] Project configured (auto-detected from vercel.json)
+- [ ] Build successful (check build logs)
+- [ ] App accessible at Vercel URL
+- [ ] PWA installable on mobile devices
+- [ ] Tested on iOS Safari
+- [ ] Tested on Android Chrome
+- [ ] Custom domain configured (optional)
+
+### Troubleshooting Vercel Deployment
+
+**Build fails with "Module not found":**
+- Check that all dependencies are in `package.json`
+- Run `npm install` locally to verify
+- Check build logs in Vercel dashboard
+
+**App loads but shows blank screen:**
+- Check browser console for errors
+- Verify `dist/` folder was created locally with `npx expo export --platform web`
+- Check that `index.html` exists in `dist/`
+
+**PWA not installable:**
+- Verify `public/manifest.json` exists
+- Check that app is served over HTTPS (Vercel does this automatically)
+- Check browser console for manifest errors
+
+**Styles not loading:**
+- Verify all imports use correct paths
+- Check that `@expo/metro-runtime` is properly configured
+- Test locally with `npx expo start --web` first
+
+### Performance Optimization (Post-Launch)
+
+Once deployed, you can optimize:
+
+1. **Enable Vercel Analytics**
+   - Go to project → Analytics tab
+   - Monitor Core Web Vitals
+   - Track page load performance
+
+2. **Image Optimization**
+   - Use Vercel Image Optimization for `<Image>` components
+   - Or use `expo-image` for better performance
+
+3. **Caching**
+   - Vercel automatically caches static assets
+   - Configure cache headers in `vercel.json` if needed
+
+4. **Bundle Size**
+   - Check current bundle: `npx expo export --platform web` shows size
+   - Current size: ~1.43 MB (reasonable for a React Native app)
+   - Optimize imports to reduce bundle size if needed
+
 ## iOS App Store Deployment
 
 ### Requirements
