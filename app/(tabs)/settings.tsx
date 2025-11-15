@@ -7,6 +7,7 @@ import { colors, spacing, typography, borderRadius } from '../../styles/tokens';
 import { useAppStore } from '../../hooks/useAppStore';
 import { DEFAULT_CYCLE_LENGTH } from '../../types';
 import { format, parseISO } from 'date-fns';
+import { sendTestNotification } from '../../utils/notifications';
 
 export default function SettingsScreen() {
   const cycleData = useAppStore((state) => state.cycleData);
