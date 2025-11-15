@@ -1,6 +1,8 @@
 # Prompt 1: Deep Research & Discovery
 
-I want to build a period support app specifically designed for PARTNERS (not for the person experiencing the period). The goal is to help partners provide better support throughout the menstrual cycle.
+I want to build a **mobile-first** period support app specifically designed for PARTNERS (not for the person experiencing the period). The goal is to help partners provide better support throughout the menstrual cycle.
+
+**Important:** This app must be deployable to iOS App Store and Google Play Store from day one. Consider mobile app requirements, app store guidelines, and mobile UX best practices throughout your research.
 
 Please conduct deep research using WebSearch and save findings to `docs/research/`:
 
@@ -44,6 +46,15 @@ Please conduct deep research using WebSearch and save findings to `docs/research
    - When should app recommend seeking medical help?
    - What disclaimers are needed?
 
+8. **Mobile App Considerations:**
+   - Research iOS and Android health app guidelines
+   - What are app store requirements for health/period tracking apps?
+   - Push notification best practices for this use case (daily reminders, phase changes?)
+   - Native app vs PWA vs hybrid - pros/cons for this specific use case
+   - Mobile UX patterns for health/wellness apps that feel modern (not clinical)
+   - Offline functionality requirements
+   - Data export/backup expectations from users
+
 ## Deliverables:
 
 Create the following files:
@@ -52,11 +63,12 @@ Create the following files:
 - `docs/research/competitive-analysis.md` - Existing apps and market gaps
 - `docs/research/user-needs.md` - Prioritized feature list and user flows
 - `docs/research/ethics-privacy.md` - Ethical considerations and guidelines
+- `docs/research/mobile-requirements.md` - Mobile platform requirements, app store guidelines, push notifications, offline needs
 - `docs/research/summary.md` - Executive summary with:
   - 5-7 core features ranked by importance
   - Content hierarchy recommendations
   - Surprising insights that should shape the app
-  - Recommended tech stack
+  - **Recommended mobile tech stack** (React Native/Expo vs PWA vs Capacitor with rationale)
 
 # Prompt 2: Design System & Architecture
 
@@ -71,14 +83,36 @@ Read all files in `docs/research/` to inform design decisions.
 Create `docs/design/technical-architecture.md` covering:
 
 **Tech Stack:**
-- Frontend framework (React + Vite recommended for modern development)
-- Styling approach (Tailwind CSS or vanilla CSS with design tokens)
+- **Mobile Framework:** Choose one of the following approaches:
+  - **React Native + Expo** (recommended) - True native iOS/Android apps from single codebase
+  - **PWA (Progressive Web App)** - Web app installable on mobile with offline support
+  - **Capacitor + React** - Web app wrapped for native deployment
+- Styling approach (NativeWind for React Native, Tailwind for web, or vanilla CSS with design tokens)
 - State management (React Context, Zustand, or Redux?)
-- Data persistence (localStorage, IndexedDB, or backend?)
-- Testing framework (Vitest + React Testing Library)
-- Build and deployment strategy
+- Data persistence (AsyncStorage for React Native, localStorage for web, or backend?)
+- Testing framework (Jest + React Native Testing Library or Vitest)
+- Build and deployment strategy (EAS Build for Expo, or standard web deployment)
+- App store requirements (iOS App Store, Google Play Store guidelines)
 
 **Project Structure:**
+
+*For React Native + Expo:*
+```
+period-support-partner-edition/
+├── app/                # Expo Router screens (or src/ for standard navigation)
+├── components/         # Reusable UI components
+├── features/           # Feature-specific components
+├── hooks/              # Custom React hooks
+├── utils/              # Helper functions
+├── styles/             # Styles, design tokens
+├── types/              # TypeScript types
+├── data/               # Static data, content
+├── assets/             # Images, fonts, icons
+├── app.json            # Expo configuration
+└── __tests__/          # Test files
+```
+
+*For Web (PWA or Capacitor):*
 ```
 period-support-partner-edition/
 ├── src/
@@ -89,7 +123,8 @@ period-support-partner-edition/
 │   ├── styles/         # Global styles, design tokens
 │   ├── types/          # TypeScript types
 │   └── data/           # Static data, content
-├── public/             # Static assets
+├── public/             # Static assets, PWA manifest
+├── capacitor/          # Native platform code (if using Capacitor)
 └── tests/              # Test files
 ```
 
@@ -188,31 +223,106 @@ Now build the complete period support partner app based on your research and des
 
 Initialize the project with the tech stack defined in `docs/design/technical-architecture.md`:
 
-1. **Initialize React + Vite project:**
+### Option A: React Native + Expo (Recommended for Native Apps)
+
+1. **Initialize Expo project:**
    ```bash
-   npm create vite@latest . -- --template react
-   # or react-ts if using TypeScript
+   npx create-expo-app@latest . --template blank-typescript
+   # or blank if not using TypeScript
    ```
 
 2. **Install dependencies:**
-   - Install styling framework (Tailwind or vanilla CSS setup)
-   - Install state management library if needed
-   - Install any other required packages
+   ```bash
+   # Navigation (if using Expo Router)
+   npx expo install expo-router react-native-safe-area-context react-native-screens
+
+   # Styling (NativeWind - Tailwind for React Native)
+   npm install nativewind
+   npm install --save-dev tailwindcss@3.3.2
+
+   # State management (if using Zustand)
+   npm install zustand
+
+   # Storage
+   npx expo install @react-native-async-storage/async-storage
+
+   # Other useful packages
+   npx expo install expo-status-bar expo-font
+   ```
 
 3. **Configure project:**
-   - Set up ESLint and Prettier
-   - Configure path aliases if needed
-   - Set up environment variables
+   - Set up NativeWind in `tailwind.config.js`
+   - Configure app.json for app name, icons, splash screen
+   - Set up TypeScript if using
+   - Configure EAS Build for app store deployment
 
 4. **Create project structure:**
-   - Follow the structure defined in technical-architecture.md
+   - Follow the React Native structure from technical-architecture.md
    - Create all necessary directories
+
+### Option B: Progressive Web App (PWA)
+
+1. **Initialize Vite + React project:**
+   ```bash
+   npm create vite@latest . -- --template react-ts
+   ```
+
+2. **Install PWA dependencies:**
+   ```bash
+   npm install vite-plugin-pwa workbox-window
+   npm install -D tailwindcss postcss autoprefixer
+   npx tailwindcss init -p
+   ```
+
+3. **Configure PWA:**
+   - Set up PWA manifest in `public/manifest.json`
+   - Configure service worker with vite-plugin-pwa
+   - Add meta tags for mobile web app
+   - Configure icons for iOS and Android
+
+### Option C: Capacitor (Web to Native)
+
+1. **Initialize Vite project (same as Option B)**
+
+2. **Add Capacitor:**
+   ```bash
+   npm install @capacitor/core @capacitor/cli
+   npx cap init
+   npm install @capacitor/ios @capacitor/android
+   npx cap add ios
+   npx cap add android
+   ```
+
+3. **Configure:**
+   - Set up Capacitor config
+   - Install Capacitor plugins (Storage, etc.)
+   - Configure native platform settings
 
 ## Step 2: Implement Design System
 
 Create the design system foundation files:
 
-1. **`src/styles/design-tokens.css`** (or as CSS-in-JS)
+### For React Native + Expo:
+
+1. **`styles/tokens.ts`** (or `styles/theme.ts`)
+   - Export color palette as JS/TS constants or theme object
+   - Define spacing scale
+   - Define typography scale (font sizes, line heights, font families)
+   - Define animation timings
+
+2. **Typography setup:**
+   - Use expo-font to load custom fonts (Google Fonts or custom .ttf files)
+   - Configure font families in tokens
+   - Set up font loading in App.tsx
+
+3. **NativeWind configuration:**
+   - Extend Tailwind config with your custom colors and spacing
+   - Configure theme in tailwind.config.js
+   - OR use StyleSheet.create with your design tokens
+
+### For Web (PWA/Capacitor):
+
+1. **`src/styles/design-tokens.css`**
    - Implement the color palette as CSS custom properties
    - Define spacing scale
    - Define typography scale
@@ -367,41 +477,104 @@ Using tone and content from `docs/design/content-strategy.md`:
 
 ## Step 9: Build & Deployment Setup
 
+### For React Native + Expo:
+
+1. **Configure app for production:**
+   - Set app name, bundle identifier, version in app.json
+   - Configure app icons (iOS and Android)
+   - Configure splash screens
+   - Set up privacy policies and permissions
+
+2. **Set up EAS Build:**
+   ```bash
+   npm install -g eas-cli
+   eas login
+   eas build:configure
+   ```
+
+3. **Create builds:**
+   ```bash
+   # iOS build
+   eas build --platform ios
+
+   # Android build
+   eas build --platform android
+   ```
+
+4. **Testing:**
+   - Test on iOS simulator and real devices
+   - Test on Android emulator and real devices
+   - Use Expo Go for quick testing
+
+### For Web (PWA):
+
 1. **Optimize for production:**
    - Code splitting
    - Lazy loading for routes
    - Image optimization
    - Bundle size analysis
 
-2. **Create README.md:**
-   - Installation instructions
-   - Development commands
-   - Build commands
-   - Environment setup
+2. **PWA Configuration:**
+   - Ensure manifest.json is complete
+   - Test service worker offline functionality
+   - Configure appropriate icons and screenshots
+   - Test "Add to Home Screen" on iOS and Android
 
 3. **Deployment configuration:**
    - Set up for Vercel/Netlify/GitHub Pages
    - Configure build scripts in package.json
+   - Ensure HTTPS is enabled
+
+### For Capacitor:
+
+1. **Build web assets:**
+   ```bash
+   npm run build
+   npx cap sync
+   ```
+
+2. **Open in native IDEs:**
+   ```bash
+   npx cap open ios
+   npx cap open android
+   ```
+
+3. **Configure native projects:**
+   - Set app icons in Xcode and Android Studio
+   - Configure splash screens
+   - Set permissions in Info.plist (iOS) and AndroidManifest.xml
+
+### All Platforms:
+
+1. **Create README.md:**
+   - Installation instructions
+   - Development commands
+   - Build commands
+   - Environment setup
+   - Platform-specific notes
 
 ## Deliverables:
 
-A fully functional React application with:
+A fully functional mobile application (native or PWA) with:
 - ✅ Complete multi-component architecture
 - ✅ Distinctive, non-generic visual design
 - ✅ Full implementation of prioritized features
-- ✅ Responsive mobile and desktop layouts
+- ✅ Mobile-optimized UI for iOS and Android
+- ✅ Responsive layouts (if PWA, also desktop)
 - ✅ WCAG AA accessibility compliance
 - ✅ Proper error handling and edge cases
-- ✅ Data persistence
-- ✅ Production-ready build configuration
+- ✅ Data persistence (AsyncStorage/localStorage)
+- ✅ Production-ready build configuration for app stores
 - ✅ Professional polish and personality
 
 **Critical Success Factors:**
+- Must be MOBILE-FIRST with excellent mobile UX
 - Must be ELABORATE with proper component separation (not a single-file app)
 - Must NOT look like a generic health/medical app
 - Must be fully functional (all interactions work)
 - Must be distinctive, memorable, and professionally designed
 - Must feel empathetic and supportive in both design and content
+- Must be ready for iOS App Store and Google Play Store deployment
 
 # Prompt 4: Testing & Quality Assurance
 
@@ -614,27 +787,108 @@ Create `docs/TECHNICAL.md`:
 
 ## Step 4: Deployment Setup
 
+### For React Native + Expo (App Stores):
+
+1. **iOS App Store Deployment:**
+   - **Prerequisites:**
+     - Apple Developer Account ($99/year)
+     - App Store Connect access
+   - **Build for iOS:**
+     ```bash
+     eas build --platform ios --profile production
+     ```
+   - **Submit to App Store:**
+     ```bash
+     eas submit --platform ios
+     ```
+   - **App Store Requirements:**
+     - Privacy policy URL
+     - App screenshots (multiple sizes)
+     - App description and keywords
+     - Age rating (likely 12+ for health-related content)
+     - Data collection disclosures
+   - **Review Preparation:**
+     - Prepare demo account if needed
+     - Write review notes explaining partner tracking concept
+     - Address potential privacy concerns proactively
+
+2. **Google Play Store Deployment:**
+   - **Prerequisites:**
+     - Google Play Developer Account ($25 one-time)
+     - Signed APK/AAB
+   - **Build for Android:**
+     ```bash
+     eas build --platform android --profile production
+     ```
+   - **Submit to Google Play:**
+     ```bash
+     eas submit --platform android
+     ```
+   - **Play Store Requirements:**
+     - Feature graphic (1024x500)
+     - Screenshots (phone and tablet)
+     - App description and keywords
+     - Privacy policy URL
+     - Content rating questionnaire
+     - Data safety section
+   - **Testing:**
+     - Internal testing track first
+     - Then closed beta testing
+     - Finally production release
+
+3. **Post-deployment:**
+   - Set up crash reporting (Sentry, Bugsnag)
+   - Configure analytics (Expo Analytics, Firebase)
+   - Monitor reviews and respond promptly
+   - Plan for updates and bug fixes
+
+### For Progressive Web App (PWA):
+
 1. **Choose hosting platform:**
-   - Vercel (recommended for React)
+   - Vercel (recommended)
    - Netlify
-   - GitHub Pages
-   - Other static hosting
+   - Cloudflare Pages
+   - Firebase Hosting
 
 2. **Configure deployment:**
    - Create deployment configuration files
    - Set up environment variables if needed
    - Configure build commands
+   - Ensure HTTPS is enabled
 
 3. **Deploy:**
    - Push to hosting platform
    - Verify deployment works
    - Test all functionality in production
+   - Test "Add to Home Screen" on mobile
    - Document deployment URL
 
-4. **Set up custom domain (optional):**
+4. **PWA Distribution:**
+   - Can also submit PWAs to Microsoft Store
+   - Can submit to Google Play Store as TWA (Trusted Web Activity)
+   - Document installation instructions for users
+
+5. **Set up custom domain (optional):**
    - Configure DNS
-   - Set up SSL
+   - Set up SSL (automatic with most hosts)
    - Document process
+
+### For Capacitor:
+
+1. **iOS Deployment:**
+   - Open Xcode project
+   - Configure signing certificates
+   - Archive and upload to App Store Connect
+   - Follow same App Store requirements as Expo
+
+2. **Android Deployment:**
+   - Open Android Studio project
+   - Generate signed AAB
+   - Upload to Google Play Console
+   - Follow same Play Store requirements as Expo
+
+3. **Web Deployment:**
+   - Same as PWA deployment above
 
 ## Step 5: Create CHANGELOG.md
 
@@ -668,23 +922,32 @@ Create `docs/ROADMAP.md`:
 
 ## Deliverables:
 
-- ✅ Comprehensive README.md
+- ✅ Comprehensive README.md with platform-specific instructions
 - ✅ User guide (docs/USER_GUIDE.md)
 - ✅ Technical documentation (docs/TECHNICAL.md)
-- ✅ Deployed application with live URL
+- ✅ **For Native Apps:**
+  - App submitted to iOS App Store (pending review or approved)
+  - App submitted to Google Play Store (pending review or approved)
+  - Privacy policy hosted and linked
+  - App store screenshots and marketing materials
+- ✅ **For PWA:**
+  - Deployed application with live URL
+  - PWA installable on mobile devices
+  - Documentation for "Add to Home Screen"
 - ✅ CHANGELOG.md
 - ✅ ROADMAP.md for future development
 - ✅ All code committed and pushed to repository
 - ✅ GitHub repository ready for sharing/collaboration
+- ✅ Analytics and crash reporting configured
 
 ---
 
 ## Summary: Complete Workflow
 
 1. **Prompt 1**: Research → Create docs/research/ files
-2. **Prompt 2**: Design → Create docs/design/ files
-3. **Prompt 3**: Build → Create complete React application
+2. **Prompt 2**: Design → Create docs/design/ files (choose mobile tech stack)
+3. **Prompt 3**: Build → Create complete mobile application (React Native/PWA/Capacitor)
 4. **Prompt 4**: Test → Create docs/testing/ files, fix issues
-5. **Prompt 5**: Document & Deploy → Final docs, live deployment
+5. **Prompt 5**: Document & Deploy → Final docs, app store submission or web deployment
 
-Each phase builds on the previous, creating a professional, production-ready application with comprehensive documentation.
+Each phase builds on the previous, creating a professional, production-ready mobile application deployable to iOS App Store and Google Play Store (or as PWA), with comprehensive documentation.
